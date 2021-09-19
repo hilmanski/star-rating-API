@@ -39,6 +39,12 @@ app.get('/products', async (req, res) => {
     res.status(201).json(data)
 });
 
+app.get('/products/:key', async (req, res) => {
+    const { key } = req.params;
+    const data = await db.get(key);
+    res.status(201).json(data)
+});
+
 
 
 const port = 5000
