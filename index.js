@@ -25,9 +25,10 @@ io.on("connection", (socket) => {
         socket.join(room);
     });
 
-    socket.on('newreview', (data) => {
+    socket.on('newreview', (data, fn) => {
         const { star_count, review, room } = data;
-        io.to(room).emit('newreview', {star_count, review});
+        io.to(room).emit('newreview', { star_count, review });
+        fn('done')
     });
 });
 
