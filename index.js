@@ -3,20 +3,48 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 
+
+//Cors Setup
+//Warning: on production select only specific domain
+app.use(cors());
 app.use(express.json())
 
-//Deta Setup
+//=================================
+//Setup Socket for realtime
+//=================================
+const { Server } = require("socket.io");
+const { createServer } = require("http");
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*',
+    } 
+});
+io.on("connection", (socket) => {
+    socket.on('join', (room) => {
+        console.log(`Socket ${socket.id} joining ${room}`);
+        socket.join(room);
+    });
+
+    socket.on('newreview', (data) => {
+        const { star_count, review, room } = data;
+        io.to(room).emit('newreview', {star_count, review});
+    });
+});
+
+
+//=================================
+//DetaBase Setup
+//=================================
 const { Deta } = require("deta")
 const deta_project_key = process.env.deta_project_key
 const deta = Deta(deta_project_key);
 const dbProduct = deta.Base('products')
 
-//Cors Setup
-    //Warning: on production select only specific domain
-app.use(cors());
 
+//=================================
 //Routing
-
+//=================================
 app.post('/products', async (req, res) => {
     const { title, body } = req.body;
     
@@ -65,8 +93,13 @@ app.post('/reviews/:key', async (req, res) => {
 
 
 
-const port = 5000
-app.listen(port, () => {
-    console.log(`listening at http://localhost:${port}`)
-})
+// const port = 5000
+// app.listen(port, () => {
+//     console.log(`listening at http://localhost:${port}`)
+// })
 module.exports = app
+
+//Socket stuff
+httpServer.listen(5000, () => {
+    console.log('listening on *:5000');
+});
