@@ -77,7 +77,7 @@ app.post('/reviews/:key', async (req, res) => {
     let { star_count, review } = req.body;
 
     //Validate star between 1-5
-    star_count = parseInt(star_count)
+    star_count = parseFloat(star_count)
     if(star_count < 1 || star_count > 5) {
         return res.status(500).json({ error: 'star count must be between 1 to 5' })
     }
