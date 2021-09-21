@@ -21,10 +21,7 @@ const io = new Server(httpServer, {
     } 
 });
 io.on("connection", (socket) => {
-    console.log(socket.id); 
-
     socket.on('join', (room) => {
-        console.log(`Socket ${socket.id} joining ${room}`);
         socket.join(room);
     });
 
@@ -78,7 +75,7 @@ app.post('/reviews/:key', async (req, res) => {
 
     //Validate star between 1-5
     star_count = parseFloat(star_count)
-    if(star_count < 1 || star_count > 5) {
+    if(star_count < 0.5 || star_count > 5) {
         return res.status(500).json({ error: 'star count must be between 1 to 5' })
     }
     
