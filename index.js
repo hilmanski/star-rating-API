@@ -21,6 +21,8 @@ const io = new Server(httpServer, {
     } 
 });
 io.on("connection", (socket) => {
+    console.log(socket.id); 
+
     socket.on('join', (room) => {
         console.log(`Socket ${socket.id} joining ${room}`);
         socket.join(room);
@@ -93,13 +95,13 @@ app.post('/reviews/:key', async (req, res) => {
 
 
 
+//Socket stuff
+httpServer.listen(5000, () => {
+    console.log('listening on *:5000');
+});
+
 // const port = 5000
 // app.listen(port, () => {
 //     console.log(`listening at http://localhost:${port}`)
 // })
 module.exports = app
-
-//Socket stuff
-httpServer.listen(5000, () => {
-    console.log('listening on *:5000');
-});
